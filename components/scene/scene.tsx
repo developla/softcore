@@ -89,8 +89,8 @@ export default function Scene() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-lg">Loading scene...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-lg text-white">Loading scene...</p>
         </div>
       </div>
     );
@@ -114,11 +114,9 @@ export default function Scene() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-lg">Generating your story...</p>
-          <p className="text-sm text-gray-600 mt-2">
-            This may take a few moments
-          </p>
+          <p className="text-sm text-white mt-2">This may take a few moments</p>
         </div>
       </div>
     );

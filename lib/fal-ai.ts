@@ -28,24 +28,7 @@ export async function generateSceneImage(
       throw new Error("FAL_AI_KEY is not configured");
     }
 
-    console.log("Character Image URL:", characterImageUrl);
-    console.log("Scene Title:", sceneTitle);
-    console.log("Scene Content:", sceneContent);
-
-    const basePrompt = ``;
-
-    let contextPrompt = "";
-    if (previousChoice) {
-      contextPrompt = ` "${sceneContent}". Maintain the character's confidence and outfit style.`;
-    }
-
-    const prompt = `NSFW nude erotic boobs
-   
-    
-     ${contextPrompt} 
-    `;
-
-    console.log("Prompt:", prompt);
+    const prompt = `a NSFW nude erotic  ${sceneContent}`;
 
     const result = await fal.subscribe("fal-ai/flux/dev/image-to-image", {
       input: {
