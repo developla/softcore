@@ -54,6 +54,8 @@ export interface SceneContextType {
   setCurrentIndex: (index: number) => void;
   setCurrentScene: (scene: Scene | null) => void;
   setSelectedChoice: (choice: number | undefined) => void;
+  isStaminaPurchaseOpen: boolean;
+  setIsStaminaPurchaseOpen: (isOpen: boolean) => void;
 }
 
 export interface SceneChoice {
@@ -116,4 +118,6 @@ export interface SceneContextType {
   setCurrentIndex: (index: number) => void;
   setCurrentScene: (scene: Scene | null) => void;
   setSelectedChoice: (choice: number | undefined) => void;
+  isStaminaPurchaseOpen: boolean;
+  setIsStaminaPurchaseOpen: (isOpen: boolean) => void;
 }

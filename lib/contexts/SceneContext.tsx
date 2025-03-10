@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useContext, useState, ReactNode } from "react";
 import { Scene, Character, User, SceneContextType } from "@/types/game";
+import { toast } from "react-hot-toast";
 
 const SceneContext = createContext<SceneContextType | undefined>(undefined);
 
@@ -97,6 +98,7 @@ export function SceneProvider({ children }: { children: ReactNode }) {
   );
   const [user, setUser] = useState<User | null>(null);
   const [isChoiceProcessing, setIsChoiceProcessing] = useState(false);
+  const [isStaminaPurchaseOpen, setIsStaminaPurchaseOpen] = useState(false);
 
   const fetchSceneData = async (characterId: string) => {
     try {
@@ -177,7 +179,21 @@ export function SceneProvider({ children }: { children: ReactNode }) {
     }
 
     if (!user?.stamina || user.stamina <= 0) {
-      alert("Insufficient stamina! Please purchase more to continue.");
+      setIsStaminaPurchaseOpen(true);
+      toast.error(
+        "You need more stamina to continue. Purchase stamina to keep playing!",
+        {
+          duration: 4000,
+          position: "bottom-center",
+          style: {
+            background: "#F43F5E", // pink-500
+            color: "white",
+            padding: "16px",
+            borderRadius: "8px",
+          },
+          icon: "⚡",
+        }
+      );
       return;
     }
 
@@ -361,6 +377,8 @@ export function SceneProvider({ children }: { children: ReactNode }) {
         setCurrentIndex,
         setCurrentScene,
         setLoading,
+        isStaminaPurchaseOpen,
+        setIsStaminaPurchaseOpen,
       }}
     >
       {children}

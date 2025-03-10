@@ -37,15 +37,34 @@ const STAMINA_PLANS: StaminaPlan[] = [
 
 interface PurchaseStaminaProps {
   onSuccess?: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export default function PurchaseStamina({ onSuccess }: PurchaseStaminaProps) {
+export default function PurchaseStamina({
+  onSuccess,
+  isOpen: propIsOpen,
+  onClose,
+}: PurchaseStaminaProps) {
   const router = useRouter();
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<StaminaPlan | null>(null);
   const { signer, walletAddress, connectWallet } = useWallet();
+
+  // Use prop value if provided
+  const showDialog = propIsOpen ?? isOpen;
+
+  // Handle close
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      setIsOpen(false);
+    }
+    setSelectedPlan(null);
+  };
 
   // Only render if user is logged in
   if (!user) {
@@ -131,15 +150,18 @@ export default function PurchaseStamina({ onSuccess }: PurchaseStaminaProps) {
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 bg-pink-500 text-white rounded-full p-4 shadow-lg hover:bg-pink-600 transition-colors z-50"
-        title="Purchase Stamina"
-      >
-        <FaBatteryThreeQuarters className="w-6 h-6" />
-      </button>
+      {/* Only show the button if propIsOpen is not provided */}
+      {propIsOpen === undefined && (
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="fixed bottom-4 right-4 bg-pink-500 text-white rounded-full p-4 shadow-lg hover:bg-pink-600 transition-colors z-50"
+          title="Purchase Stamina"
+        >
+          <FaBatteryThreeQuarters className="w-6 h-6" />
+        </button>
+      )}
 
-      {isOpen && (
+      {showDialog && (
         <div className="fixed bottom-20 right-4 bg-white rounded-lg shadow-xl p-4 w-80 border-2 border-black z-50">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold">Purchase Stamina</h3>
@@ -153,7 +175,7 @@ export default function PurchaseStamina({ onSuccess }: PurchaseStaminaProps) {
                 History
               </Link>
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={handleClose}
                 className="text-gray-500 hover:text-gray-700"
               >
                 ✕

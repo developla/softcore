@@ -6,6 +6,7 @@ import { WalletProvider } from "@/lib/contexts/WalletContext";
 import AgeVerification from "@/components/age-verification";
 import "./globals.css";
 import PurchaseStamina from "@/components/stamina/purchase-stamina";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,13 +56,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>
-        <AgeVerification />
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
         <WalletProvider>
-          <Navbar />
-          <Layout>{children}</Layout>
-          <PurchaseStamina />
+          <Layout>
+            <Navbar />
+            {children}
+            <AgeVerification />
+            <Toaster />
+          </Layout>
         </WalletProvider>
       </body>
     </html>

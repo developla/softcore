@@ -6,6 +6,7 @@ import SceneDialogSelection from "./scene-dialog-selection";
 import SceneCharacter from "./scene-character";
 import { useScene } from "@/lib/contexts/SceneContext";
 import type { Scene } from "@/types/game";
+import PurchaseStamina from "../stamina/purchase-stamina";
 
 export default function Scene() {
   const params = useParams();
@@ -29,7 +30,14 @@ export default function Scene() {
     setSelectedChoice,
     setLoading,
     setAllScenes,
+    isStaminaPurchaseOpen,
+    setIsStaminaPurchaseOpen,
   } = useScene();
+
+  // Add handleStaminaPurchaseSuccess
+  const handleStaminaPurchaseSuccess = () => {
+    setIsStaminaPurchaseOpen(false);
+  };
 
   // Initial data fetching
   useEffect(() => {
@@ -117,76 +125,87 @@ export default function Scene() {
   }
 
   return (
-    <div className="w-11/12 md:w-4/5 mx-auto grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 h-full">
-      <div className="col-span-1 md:col-span-3 text-center md:text-start flex flex-col justify-end">
-        <SceneDialogSelection
-          key={`selection-${currentScene?._updateKey || 0}-${currentIndex}`}
-          choices={currentScene?.choices || []}
-          onChoiceSelect={handleChoiceSelect}
-          selectedChoice={selectedChoice}
-          previousChoice={currentScene?.userChoices?.[0]?.choiceIndex}
-          isProcessing={isChoiceProcessing}
-          isHistoricalScene={Boolean(currentScene?.userChoices?.length)}
-        />
-      </div>
-      <div className="col-span-1 text-center">
-        <SceneCharacter
-          key={`character-${currentScene._updateKey || 0}`}
-          imageUrl={currentScene.imageUrl}
-        />
-      </div>
-      <div className="col-span-1 md:col-span-4 text-center h-44 sm:h-40 md:h-48 rounded-xl -mb-4 sm:-mb-6 md:-mb-8">
-        {character && (
-          <SceneDialog
-            key={`dialog-${currentScene?._updateKey || 0}-${currentIndex}`}
-            scene={currentScene}
-            character={character}
-            stamina={user?.stamina || 0}
-            allScenes={allScenes}
-            onPrevious={handlePreviousScene}
-            onNext={handleNextScene}
-            onMint={handleMintScene}
-            isFirstScene={currentIndex === 0}
-            isLastScene={currentIndex === allScenes.length - 1}
-            disableNext={
-              !selectedChoice && currentScene?.userChoices?.length === 0
-            }
-            onSceneSelect={async (index) => {
-              try {
-                const selectedScene = allScenes[index];
-                setLoading(true);
-
-                // Fetch fresh data from the database
-                const response = await fetch(
-                  `/api/scene?sceneId=${selectedScene.id}`
-                );
-                if (!response.ok) {
-                  throw new Error("Failed to fetch scene data");
-                }
-                const { scene: freshScene } = await response.json();
-
-                // Update the scene in allScenes array
-                const updatedScenes = allScenes.map(
-                  (s, i): Scene =>
-                    i === index ? { ...freshScene, _updateKey: Date.now() } : s
-                );
-                setAllScenes(updatedScenes);
-
-                setCurrentIndex(index);
-                setCurrentScene({ ...freshScene, _updateKey: Date.now() });
-                setSelectedChoice(freshScene.userChoices?.[0]?.choiceIndex);
-              } catch (error) {
-                console.error("Error fetching scene:", error);
-                setError("Failed to load scene data");
-              } finally {
-                setLoading(false);
-              }
-            }}
-            currentIndex={currentIndex}
+    <>
+      <div className="w-11/12 md:w-4/5 mx-auto grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 h-full">
+        <div className="col-span-1 md:col-span-3 text-center md:text-start flex flex-col justify-end">
+          <SceneDialogSelection
+            key={`selection-${currentScene?._updateKey || 0}-${currentIndex}`}
+            choices={currentScene?.choices || []}
+            onChoiceSelect={handleChoiceSelect}
+            selectedChoice={selectedChoice}
+            previousChoice={currentScene?.userChoices?.[0]?.choiceIndex}
+            isProcessing={isChoiceProcessing}
+            isHistoricalScene={Boolean(currentScene?.userChoices?.length)}
           />
-        )}
+        </div>
+        <div className="col-span-1 text-center">
+          <SceneCharacter
+            key={`character-${currentScene._updateKey || 0}`}
+            imageUrl={currentScene.imageUrl}
+          />
+        </div>
+        <div className="col-span-1 md:col-span-4 text-center h-44 sm:h-40 md:h-48 rounded-xl -mb-4 sm:-mb-6 md:-mb-8">
+          {character && (
+            <SceneDialog
+              key={`dialog-${currentScene?._updateKey || 0}-${currentIndex}`}
+              scene={currentScene}
+              character={character}
+              stamina={user?.stamina || 0}
+              allScenes={allScenes}
+              onPrevious={handlePreviousScene}
+              onNext={handleNextScene}
+              onMint={handleMintScene}
+              isFirstScene={currentIndex === 0}
+              isLastScene={currentIndex === allScenes.length - 1}
+              disableNext={
+                !selectedChoice && currentScene?.userChoices?.length === 0
+              }
+              onSceneSelect={async (index) => {
+                try {
+                  const selectedScene = allScenes[index];
+                  setLoading(true);
+
+                  // Fetch fresh data from the database
+                  const response = await fetch(
+                    `/api/scene?sceneId=${selectedScene.id}`
+                  );
+                  if (!response.ok) {
+                    throw new Error("Failed to fetch scene data");
+                  }
+                  const { scene: freshScene } = await response.json();
+
+                  // Update the scene in allScenes array
+                  const updatedScenes = allScenes.map(
+                    (s, i): Scene =>
+                      i === index
+                        ? { ...freshScene, _updateKey: Date.now() }
+                        : s
+                  );
+                  setAllScenes(updatedScenes);
+
+                  setCurrentIndex(index);
+                  setCurrentScene({ ...freshScene, _updateKey: Date.now() });
+                  setSelectedChoice(freshScene.userChoices?.[0]?.choiceIndex);
+                } catch (error) {
+                  console.error("Error fetching scene:", error);
+                  setError("Failed to load scene data");
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              currentIndex={currentIndex}
+            />
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Add PurchaseStamina component */}
+      <PurchaseStamina
+        onSuccess={handleStaminaPurchaseSuccess}
+        isOpen={isStaminaPurchaseOpen}
+        onClose={() => setIsStaminaPurchaseOpen(false)}
+      />
+    </>
   );
 }
 function setError(message: string) {
