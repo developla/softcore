@@ -15,7 +15,7 @@ const sceneCache = new Map<
 export async function generateCharacterProfile() {
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
@@ -98,7 +98,7 @@ export async function generateSceneContent(
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
@@ -153,7 +153,7 @@ export async function generateSceneContent(
 export async function generateInitialScene(characterName: string) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
